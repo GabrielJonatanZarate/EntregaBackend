@@ -28,13 +28,13 @@ router.post('/', (req, res) => {
 
     const newProd = {
         id: uuidv4(),
-        title,
-        description,
-        code,
-        price,
-        status,
-        stock,
-        category
+        title: "remera",
+        description: "xl",
+        code: "08b08b",
+        price: 20,
+        status: true,
+        stock: 50,
+        category: "ropa"
     };
 
     products.push(newProd);
