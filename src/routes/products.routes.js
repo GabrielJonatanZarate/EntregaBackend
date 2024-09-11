@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:pid', (req, res) => {
-    const prodId = req.params.id;
+    const prodId = req.params.pid;
     const prod = products.find(prod => prod.id === prodId)
 
     if (!prod) {
@@ -42,7 +42,7 @@ router.post('/', (req, res) => {
 });
 
 router.put('/:pid', (req, res) => {
-    const prodId = req.params.id;
+    const prodId = req.params.pid;
     const { title, description, code, price, status, stock, category } = req.body;
     const prodIndex = products.findIndex(prod => prod.id === prodId)
 
@@ -67,14 +67,14 @@ router.put('/:pid', (req, res) => {
 })
 
 router.delete('/:pid', (req, res) => {
-    const prodEliminar = req.params.id;
+    const prodEliminar = req.params.pid;
     const prodIndex = products.findIndex(prod => prod.id === prodEliminar);
 
     if(prodIndex === -1){
         return res.status(404).json({error: 'Producto no encontrado'});
     }
 
-    products.slice(prodIndex, 1);
+    products.splice(prodIndex, 1);
     res.status(204).json({mensaje: 'Producto eliminado'});
 })
 

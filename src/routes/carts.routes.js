@@ -5,36 +5,31 @@ const router = Router();
 let carts = [];
 
 router.post('/', (req, res) => {
-    const { products } = req.body;
 
-    if (!carts.some(cart => cart.products === products)) {
-        return res.status(400).json({ error: 'Producto existente' })
-    }
-
-    const cartProd = {
+    const newCart = {
         id: uuidv4(),
         products: []
 
     }
 
-    carts.push(cartProd);
-    res.status(201).json(cartProd);
+    carts.push(newCart);
+    res.status(201).json(newCart);
 });
 
-router.get('/get:cid', (req, res) => {
+router.get('/:cid', (req, res) => {
     const { cid } = req.params;
 
-    const cart = cart.find(cart => cart.products === cid);
+    const cart = carts.find(cart => cart.id === cid);
 
-    if(!carts){
+    if(!cart){
         return res.status(404).json({error: 'Carrito no encontrado'});
     }
-    res.json(carts.products);
+    res.json(cart.products);
 });
 
 router.post('/:cid/product/:pid', (req, res) =>{
     const { cid, pid } =req.params;
-    const cart = carts.find(cart => cart.products === cid);
+    const cart = carts.find(cart => cart.id === cid);
 
     if(!cart) {
         return res.status(404).json({error: 'Carrito no encontrado'});
@@ -45,7 +40,7 @@ router.post('/:cid/product/:pid', (req, res) =>{
     if(productoExistente) {
         productoExistente.quantity += 1;
     }else {
-        cart.product.push({
+        cart.products.push({
             product: pid,
             quantity: 1
         });
@@ -55,14 +50,3 @@ router.post('/:cid/product/:pid', (req, res) =>{
 
 
 export default router;
-
-
-
-
-
-
-
-
-//router.get('/', (req, res) => {
-//     res.json(carts);
-// });
