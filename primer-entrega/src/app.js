@@ -5,6 +5,7 @@ import cartsRouter from './routes/carts.routes.js';
 import productsRouter from './routes/products.routes.js';
 import viewsRouter from './routes/views.router.js';
 import { Server } from 'socket.io';
+import { v4 as uuidv4 } from 'uuid';
 
 const app = express();
 const PORT = 8080;
@@ -32,6 +33,29 @@ app.set('view engine', 'handlebars');
 
 // Establecer la carpeta pública de manera estática
 app.use(express.static(__dirname + '/public'));
+
+let products = []; // Arreglo de productos
+
+// Escuchar conexiones entrantes
+socketServer.on('connection', (socket) => {
+    console.log("Nuevo cliente conectado");
+
+    // Cargar productos cuando un cliente se conecta
+    socket.emit('loadProducts', products);
+
+    // Manejar la adición de nuevos productos
+    socket.on('addProduct', (newProduct) => {
+        const product = { id: uuidv4(), ...newProduct }; // Agregar un ID único
+        products.push(product);
+        socketServer.emit('loadProducts', products); // Enviar la lista actualizada a todos los clientes
+    });
+
+    // Manejar la eliminación de productos
+    socket.on('deleteProduct', (productId) => {
+        products = products.filter(product => product.id !== productId); // Filtrar el producto que se elimina
+        socketServer.emit('loadProducts', products); // Enviar la lista actualizada a todos los clientes
+    });
+});
 
 const messages =[];
 // Escuchar conexiones entrantes

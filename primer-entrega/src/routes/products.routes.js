@@ -2,10 +2,18 @@ import { Router } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 
 const router = Router();
-
 let products = [];
 
 // Ruta para obtener todos los productos
+router.get('/', (req, res) => {
+    res.json(products);
+});
+
+//Funcion para obtener todos los productos
+export const getAllProducts = () => {
+    return products; // Devuelve el arreglo de productos
+};
+
 router.get('/', (req, res) => {
     res.json(products);
 });
