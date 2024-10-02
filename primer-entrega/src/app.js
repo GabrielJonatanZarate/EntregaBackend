@@ -6,6 +6,7 @@ import productsRouter from './routes/products.routes.js';
 import viewsRouter from './routes/views.router.js';
 import { Server } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
+import path from 'path';
 
 const app = express();
 const PORT = 8080;
@@ -28,7 +29,7 @@ app.use('/', viewsRouter);
 
 // Inicializar el motor de plantillas
 app.engine('handlebars', handlebars.engine());
-app.set('views', __dirname + '/views');
+app.set('views', path.join(__dirname + '/views'));
 app.set('view engine', 'handlebars');
 
 // Establecer la carpeta pública de manera estática

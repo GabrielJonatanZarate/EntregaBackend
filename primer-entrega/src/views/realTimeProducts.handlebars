@@ -1,14 +1,28 @@
-<h1>Productos en Tiempo Real</h1>
+<!DOCTYPE html>
+<html lang="en">
 
-<div id="productsContainer">
-    <ul id="productList"></ul>
-</div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos en Tiempo Real</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
 
-<input type="text" id="titleInput" placeholder="Título">
-<input type="text" id="descriptionInput" placeholder="Descripción">
-<input type="number" id="priceInput" placeholder="Precio">
-<input type="number" id="stockInput" placeholder="Stock">
-<button id="addProductButton">Agregar Producto</button>
+<body>
+    <h1>Productos en Tiempo Real</h1>
 
-<script src="/socket.io/socket.io.js"></script>
-<script src="/js/realtimeProducts.js"></script>
+    <div id="productsContainer">
+        <ul id="productList"></ul>
+    </div>
+
+    <input type="text" id="titleInput" placeholder="Título">
+    <input type="text" id="descriptionInput" placeholder="Descripción">
+    <input type="number" id="priceInput" placeholder="Precio">
+    <input type="number" id="stockInput" placeholder="Stock">
+    <button id="addProductButton">Agregar Producto</button>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/realtimeProducts.js"></script>
+</body>
+
+</html>
