@@ -1,11 +1,51 @@
-<div>
-    <h1>¡Que agrado verte! Estas aprendiendo a usar websocket</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1>Lista de Productos</h1>
+    
+    {{#if products.length}}
+        <ul>
+            {{#each products}}
+                <li>
+                    <strong>{{this.title}}</strong>: {{this.description}} (Precio: {{this.price}}) - Stock: {{this.stock}}
+                    <a href="/products/{{this._id}}">Ver detalles</a>
+                    <button onclick="addToCart('{{this._id}}')">Agregar al carrito</button>
+                </li>
+            {{/each}}
+        </ul>
+        <div>
+            {{#if hasPrevPage}}
+                <a href="/products?page={{prevPage}}">Página Anterior</a>
+            {{/if}}
+            {{#if hasNextPage}}
+                <a href="/products?page={{nextPage}}">Página Siguiente</a>
+            {{/if}}
+        </div>
+    {{else}}
+        <p>No hay productos disponibles.</p>
+    {{/if}}
 
-    <input type="text" id="messageInput">
-    <button id="sendMessage">Enviar</button>
-    <div id="messageContainer"></div>
-
-</div>
-
-<script src="/socket.io/socket.io.js"></script>
-<script src="/js/index.js"></script>
+    <script>
+        function addToCart(productId) {
+            fetch(`/api/carts/YOUR_CART_ID/products/${productId}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Producto agregado al carrito');
+                } else {
+                    alert('Error al agregar el producto');
+                }
+            })
+            .catch(err => console.error(err));
+        }
+    </script>
+</body>
+</html>

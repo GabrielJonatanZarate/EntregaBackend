@@ -7,9 +7,24 @@ import viewsRouter from './routes/views.router.js';
 import { Server } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
+import connectDB from './database.js';
+import mongoose from 'mongoose';
 
+const MONGODB_URI = 'tu_uri_aqui'; // Cambia esto por tu URI de MongoDB
+
+mongoose.connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+}).then(() => {
+    console.log('Conectado a MongoDB');
+}).catch(err => {
+    console.error('Error al conectar a MongoDB:', err);
+});
 const app = express();
 const PORT = 8080;
+
+// Conectar a MongoDB
+connectDB();
 
 // Crear el servidor HTTP a partir de la app de Express
 const httpServer = app.listen(PORT, () => {

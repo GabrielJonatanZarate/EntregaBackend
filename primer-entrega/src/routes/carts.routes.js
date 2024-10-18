@@ -1,55 +1,102 @@
 import { Router } from 'express';
-import { v4 as uuidv4 } from 'uuid';
+import Cart from '../models/cart.model.js'; 
 
 const router = Router();
-let carts = [];
 
-// Ruta para crear un nuevo carrito
-router.post('/', (req, res) => {
+// Eliminar un producto del carrito
+router.delete('/:cid/products/:pid', async (req, res) => {
+    const { cid, pid } = req.params;
 
-    const newCart = {
-        id: uuidv4(),
-        products: []
+    try {
+        const cart = await Cart.findById(cid);
+        if (!cart) {
+            return res.status(404).json({ error: 'Carrito no encontrado' });
+        }
 
+        cart.products = cart.products.filter(product => product.productId.toString() !== pid);
+        await cart.save();
+
+        res.json({ message: 'Producto eliminado del carrito', products: cart.products });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al eliminar el producto del carrito' });
     }
-
-    carts.push(newCart);
-    res.status(201).json(newCart);
 });
 
-// Ruta para obtener un carrito específico por su ID
-router.get('/:cid', (req, res) => {
+// Actualizar el carrito con un arreglo de productos
+router.put('/:cid', async (req, res) => {
+    const { cid } = req.params;
+    const { products } = req.body; // Espera un arreglo de productos con { productId, quantity }
+
+    try {
+        const cart = await Cart.findByIdAndUpdate(cid, { products }, { new: true });
+        if (!cart) {
+            return res.status(404).json({ error: 'Carrito no encontrado' });
+        }
+
+        res.json(cart);
+    } catch (error) {
+        res.status(500).json({ error: 'Error al actualizar el carrito' });
+    }
+});
+
+// Actualizar solo la cantidad de ejemplares de un producto en el carrito
+router.put('/:cid/products/:pid', async (req, res) => {
+    const { cid, pid } = req.params;
+    const { quantity } = req.body;
+
+    try {
+        const cart = await Cart.findById(cid);
+        if (!cart) {
+            return res.status(404).json({ error: 'Carrito no encontrado' });
+        }
+
+        const productInCart = cart.products.find(product => product.productId.toString() === pid);
+        if (productInCart) {
+            productInCart.quantity = quantity;
+            await cart.save();
+            res.json(cart);
+        } else {
+            res.status(404).json({ error: 'Producto no encontrado en el carrito' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Error al actualizar la cantidad del producto' });
+    }
+});
+
+// Eliminar todos los productos del carrito
+router.delete('/:cid', async (req, res) => {
     const { cid } = req.params;
 
-    const cart = carts.find(cart => cart.id === cid);
+    try {
+        const cart = await Cart.findById(cid);
+        if (!cart) {
+            return res.status(404).json({ error: 'Carrito no encontrado' });
+        }
 
-    if(!cart){
-        return res.status(404).json({error: 'Carrito no encontrado'});
+        cart.products = [];
+        await cart.save();
+
+        res.json({ message: 'Todos los productos han sido eliminados del carrito' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al eliminar productos del carrito' });
     }
-    res.json(cart.products);
 });
 
-// Ruta para agregar un producto a un carrito específico
-router.post('/:cid/product/:pid', (req, res) =>{
-    const { cid, pid } =req.params;
-    const cart = carts.find(cart => cart.id === cid);
+// Obtener todos los productos del carrito con populate
+router.get('/:cid', async (req, res) => {
+    const { cid } = req.params;
 
-    if(!cart) {
-        return res.status(404).json({error: 'Carrito no encontrado'});
+    try {
+        const cart = await Cart.findById(cid).populate('products.productId'); 
+        if (!cart) {
+            return res.status(404).json({ error: 'Carrito no encontrado' });
+        }
+        
+        res.json(cart);
+    } catch (error) {
+        res.status(500).json({ error: 'Error al obtener el carrito' });
     }
-
-    const productoExistente = cart.products.find(product => product.product === pid);
-
-    if(productoExistente) {
-        productoExistente.quantity += 1;
-    }else {
-        cart.products.push({
-            product: pid,
-            quantity: 1
-        });
-    }
-    res.status(200).json(cart.products);
 });
-
 
 export default router;
+

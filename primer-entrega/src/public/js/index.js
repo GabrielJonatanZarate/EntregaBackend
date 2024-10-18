@@ -18,7 +18,7 @@ const sendMessageButton = document.getElementById('sendMessage');
 const messageContainer = document.getElementById('messageContainer');
 
 sendMessageButton.addEventListener('click', () => {
-    const message = messageInput.ariaValueMax;
+    const message = messageInput.value;
     socket.emit('newMessage', message);
     messageInput.value = '';
 });
